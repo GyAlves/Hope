@@ -29,6 +29,7 @@ interface Hospital {
   open_hours: string;
   open_to_visitations: boolean;
   images: Array<{
+    id: string;
     url: string;
   }>
 }
@@ -40,7 +41,9 @@ interface HospitalParams{
 
 export default function Hospital() {
   const params = useParams<HospitalParams>();
+
   const [hospital, setHospital] = useState<Hospital>();
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   useEffect(() => {
       api.get(`/hospitals/${params.id}`).then(response => {
@@ -58,27 +61,23 @@ export default function Hospital() {
 
       <main>
         <div className="orphanage-details">
-          <img src={hospital.images[0].url} alt={hospital.name}/>
+          <img src={hospital.images[activeImageIndex].url} alt={hospital.name}/>
 
           <div className="images">
-            <button className="active" type="button">
-              <img src="https://www.gcd.com.br/wp-content/uploads/2020/08/safe_image.jpg" alt="Lar das meninas" />
-            </button>
-            <button type="button">
-              <img src="https://www.gcd.com.br/wp-content/uploads/2020/08/safe_image.jpg" alt="Lar das meninas" />
-            </button>
-            <button type="button">
-              <img src="https://www.gcd.com.br/wp-content/uploads/2020/08/safe_image.jpg" alt="Lar das meninas" />
-            </button>
-            <button type="button">
-              <img src="https://www.gcd.com.br/wp-content/uploads/2020/08/safe_image.jpg" alt="Lar das meninas" />
-            </button>
-            <button type="button">
-              <img src="https://www.gcd.com.br/wp-content/uploads/2020/08/safe_image.jpg" alt="Lar das meninas" />
-            </button>
-            <button type="button">
-              <img src="https://www.gcd.com.br/wp-content/uploads/2020/08/safe_image.jpg" alt="Lar das meninas" />
-            </button>
+            {hospital.images.map((image, index) => {
+              return(
+                <button 
+                  key={image.id} 
+                  className={activeImageIndex === index ? 'active': ''} 
+                  type="button"
+                  onClick={(() => {
+                    setActiveImageIndex(index);
+                  })}
+                >
+                  <img src={image.url} alt={hospital.name} />
+                </button>
+              )
+            })}
           </div>
           
           <div className="orphanage-details-content">
@@ -102,7 +101,8 @@ export default function Hospital() {
               </Map>
 
               <footer>
-                <a href="">Ver endereço no Google Maps</a>
+                <a target="_blank" rel="noopener noreferrer" href={`https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`}>
+                Ver endereço no Google Maps</a>
               </footer>
             </div>
 
