@@ -7,7 +7,7 @@ import Leaftlet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import target from '../assets/target.svg';
-import '../styles/pages/orphanages-map.css';
+import '../styles/pages/hospitals-map.css';
 
 const mapIcon = Leaftlet.icon({
     iconUrl: target,
@@ -33,8 +33,8 @@ function OrphanagesMap(){
                 </footer>
             </aside>
             <Map 
-                center={[-23.4422272,-46.5272832,]}
-                zoom={13}
+                center={[-23.4444239,-46.4654268]}
+                zoom={11}
                 style={{width: '100%' ,height:'100%' }}
             >
                 <TileLayer url="https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
@@ -54,7 +54,7 @@ function OrphanagesMap(){
                 </Marker>
             </Map>
 
-            <Link to="" className="create-orphanage">
+            <Link to="/hospitals/create" className="create-orphanage">
                 <FiPlus size={26} color="#FFF" />
             </Link>
         </div>
