@@ -6,9 +6,11 @@
     display: flex;
 }
 
+
 #page-map aside {
     width: 440px;
-    background: linear-gradient(329.54deg,#29b6d1 0%, #00c7c7 100%);
+    background: #CB73F4;
+ 
     padding: 80px;
     
     display: flex;
@@ -52,7 +54,7 @@
 
     width: 64px;
     height: 64px;
-    background: #15c3d6;
+    background: #CB73F4;
     border-radius: 20px;
 
     display: flex;
@@ -62,5 +64,5 @@
     transition: background-color 0.2s;
 }
 #page-map .create-orphanage:hover{
-    background: #17d6eb;
+    background: #a844d6;
 }
