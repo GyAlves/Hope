@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from 'react-router-dom';
 import { FaWhatsapp } from "react-icons/fa";
 import { FiClock, FiInfo } from "react-icons/fi";
 import { Map, Marker, TileLayer } from "react-leaflet";
@@ -8,6 +9,7 @@ import mapMarkerImg from '../assets/target.svg';
 
 import '../styles/pages/hospital.css';
 import Sidebar from "../components/Sidebar";
+import api from "../services/api";
 
 const hopeMapIcon = L.icon({
   iconUrl: mapMarkerImg,
@@ -17,7 +19,38 @@ const hopeMapIcon = L.icon({
   popupAnchor: [0, -60]
 })
 
-export default function Orphanage() {
+interface Hospital {
+  id: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+  about: string;
+  instructions: string;
+  open_hours: string;
+  open_to_visitations: boolean;
+  images: Array<{
+    url: string;
+  }>
+}
+
+
+interface HospitalParams{
+  id: string;
+}
+
+export default function Hospital() {
+  const params = useParams<HospitalParams>();
+  const [hospital, setHospital] = useState<Hospital>();
+
+  useEffect(() => {
+      api.get(`/hospitals/${params.id}`).then(response => {
+          setHospital(response.data)
+      })
+  },[params.id])
+
+  if(!hospital){
+    return <p>Buscando detalhes...</p>
+  }
 
   return (
     <div id="page-orphanage">
@@ -25,7 +58,7 @@ export default function Orphanage() {
 
       <main>
         <div className="orphanage-details">
-          <img src="https://www.gcd.com.br/wp-content/uploads/2020/08/safe_image.jpg" alt="Lar das meninas" />
+          <img src={hospital.images[0].url} alt={hospital.name}/>
 
           <div className="images">
             <button className="active" type="button">
@@ -49,12 +82,12 @@ export default function Orphanage() {
           </div>
           
           <div className="orphanage-details-content">
-            <h1>Lar das meninas</h1>
-            <p>Presta assistência a crianças de 06 a 15 anos que se encontre em situação de risco e/ou vulnerabilidade social.</p>
+            <h1>{hospital.name}</h1>
+            <p>{hospital.about}</p>
 
             <div className="map-container">
               <Map 
-                center={[-27.2092052,-49.6401092]} 
+                center={[hospital.latitude,hospital.longitude]} 
                 zoom={16} 
                 style={{ width: '100%', height: 280 }}
                 dragging={false}
@@ -63,33 +96,39 @@ export default function Orphanage() {
                 scrollWheelZoom={false}
                 doubleClickZoom={false}
               >
-                <TileLayer 
-                  url={`https://api.mapbox.com/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`}
-                />
-                <Marker interactive={false} icon={hopeMapIcon} position={[-27.2092052,-49.6401092]} />
+                <TileLayer url="https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+
+                <Marker interactive={false} icon={hopeMapIcon} position={[hospital.latitude,hospital.longitude]} />
               </Map>
 
               <footer>
-                <a href="">Ver rotas no Google Maps</a>
+                <a href="">Ver endereço no Google Maps</a>
               </footer>
             </div>
 
             <hr />
 
-            <h2>Instruções para visita</h2>
-            <p>Venha como se sentir mais à vontade e traga muito amor para dar.</p>
+            <h2>Instruções para envio</h2>
+            <p>{hospital.instructions}</p>
 
             <div className="open-details">
               <div className="hour">
                 <FiClock size={32} color="#15B6D6" />
-                Segunda à Sexta <br />
-                8h às 18h
+                {hospital.open_hours}
               </div>
-              <div className="open-on-weekends">
-                <FiInfo size={32} color="#39CC83" />
-                Atendemos <br />
-                fim de semana
-              </div>
+              {hospital.open_to_visitations ?(
+                <div className="open-on-weekends">
+                  <FiInfo size={32} color="#39CC83" />
+                  Estamos abertos <br />
+                  para visitação
+                </div>
+              )  : (
+                <div className="open-on-weekends not-open">
+                  <FiInfo size={32} color="#FF669D" />
+                  Não estamos abertos  <br />
+                  para visitação
+                </div>
+              )}
             </div>
 
             <button type="button" className="contact-button">

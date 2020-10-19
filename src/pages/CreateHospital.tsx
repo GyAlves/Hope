@@ -16,7 +16,7 @@ const hopeMapIcon = L.icon({
   popupAnchor: [0, -60]
 })
 
-export default function CreateOrphanage() {
+export default function CreateHospital() {
   return (
     <div id="page-create-orphanage">
       <Sidebar/>
